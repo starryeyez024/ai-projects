@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Tools Explorer — May 2026</title>
+  <style>
+    :root {
+      --bg: #0b0f1a;
+      --surface: #121829;
+      --text: #e8ecf4;
+      --muted: #9aa3b8;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .bg-orbs span {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .bg-orbs span:nth-child(1) { width: 420px; height: 420px; background: #6366f1; top: -10%; left: -5%; }
+    .bg-orbs span:nth-child(2) { width: 360px; height: 360px; background: #ec4899; top: 40%; right: -8%; animation-delay: -6s; }
+    .bg-orbs span:nth-child(3) { width: 300px; height: 300px; background: #14b8a6; bottom: -5%; left: 30%; animation-delay: -12s; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(30px, -20px) scale(1.08); }
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #f9a8d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header .sub {
+      color: var(--muted);
+      margin-top: 0.5rem;
+      font-size: 1.05rem;
+    }
+
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .toc h2 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+    .toc ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+    }
+    .toc a {
+      color: #c7d2fe;
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .toc a:hover {
+      color: #fff;
+      border-bottom-color: #818cf8;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent);
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top right, var(--accent-glow), transparent 65%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      border-color: rgba(255,255,255,0.15);
+    }
+    .card:hover::after { opacity: 0.12; }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .card h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+    .badge {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .tagline {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--accent-light);
+      margin-bottom: 0.85rem;
+    }
+    .card p.desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .resolve {
+      font-size: 0.78rem;
+      color: #fbbf24;
+      background: rgba(251,191,36,0.1);
+      border-radius: 8px;
+      padding: 0.5rem 0.65rem;
+      margin-bottom: 0.85rem;
+      line-height: 1.45;
+    }
+    .resolve strong { color: #fcd34d; }
+    .resolve a { color: #fde68a; }
+
+    .card h4 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin: 1rem 0 0.4rem;
+    }
+    .card ul {
+      list-style: none;
+      font-size: 0.88rem;
+    }
+    .card ul li {
+      padding: 0.2rem 0 0.2rem 1.1rem;
+      position: relative;
+    }
+    .card ul li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent-light);
+      font-size: 0.85em;
+    }
+
+    .pricing {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .pricing .tier {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      padding: 0.35rem 0;
+    }
+    .pricing .tier-name { color: var(--text); font-weight: 600; flex-shrink: 0; }
+    .pricing .tier-cost { color: var(--accent-light); text-align: right; }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    footer p + p { margin-top: 0.5rem; }
+
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: 1fr; }
+      .pricing .tier { flex-direction: column; gap: 0.15rem; }
+      .pricing .tier-cost { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orbs" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <h1>AI Tools Explorer</h1>
+      <p class="sub">Eight wild tools, one playful tour — researched for May 2026</p>
+    </header>
+
+    <nav class="toc" aria-label="Table of contents">
+      <h2>Jump to</h2>
+      <ul>
+        <li><a href="#notebooklm">NotebookLM</a></li>
+        <li><a href="#ii-agent">II-Agent</a></li>
+        <li><a href="#replit">Replit</a></li>
+        <li><a href="#suno">Suno</a></li>
+        <li><a href="#udio">Udio</a></li>
+        <li><a href="#kling">Kling AI</a></li>
+        <li><a href="#flora">FLORA &amp; FAUNA</a></li>
+        <li><a href="#kriya">Cockpit (Kriya)</a></li>
+      </ul>
+    </nav>
+
+    <main class="grid">
+
+      <article class="card" id="notebooklm" style="--accent:#4285f4;--accent-light:#93c5fd;--accent-glow:rgba(66,133,244,0.4)">
+        <div class="card-header">
+          <h3>Google NotebookLM</h3>
+          <span class="badge">notebook.lm</span>
+        </div>
+        <p class="tagline">"Your sources, your podcast, your brain — grounded."</p>
+        <p class="desc">Google's AI research notebook powered by Gemini. Upload PDFs, Docs, Slides, websites, YouTube, and audio — then chat with citations, generate study guides, and spin up Audio Overviews (AI "Deep Dive" podcasts) from your material.</p>
+        <h4>Best for</h4>
+        <ul>
+          <li>Students &amp; researchers digesting dense reading</li>
+          <li>Teams turning docs into briefings &amp; FAQs</li>
+          <li>Learning on the go via Audio Overviews</li>
+          <li>Source-grounded Q&amp;A (fewer hallucinations)</li>
+        </ul>
+        <div class="pricing">
+          <h4>Pricing (approx.)</h4>
+          <div class="tier"><span class="tier-name">Free</span><span class="tier-cost">$0 — ~100 notebooks, 50 sources each, 3 audio/day</span></div>
+          <div class="tier"><span class="tier-name">Plus</span><span class="tier-cost">via Google AI Premium ~$20/mo</span></div>
+          <div class="tier"><span class="tier-name">Pro / Ultra</span><span class="tier-cost">Higher limits; Ultra ~$250/mo enterprise-scale</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="ii-agent" style="--accent:#8b5cf6;--accent-light:#c4b5fd;--accent-glow:rgba(139,92,246,0.4)">
+        <div class="card-header">
+          <h3>II-Agent</h3>
+          <span class="badge">agent.ii</span>
+        </div>
+        <p class="tagline">"Open-source agent that actually ships — BYOK optional."</p>
+        <p class="resolve"><strong>Matched:</strong> <code>agent.ii</code> → II-Agent by Intelligent Internet (<a href="https://agent.ii.inc">agent.ii.inc</a> / <a href="https://ii.inc">ii.inc</a>). V1 launched Feb 2026; Apache-2.0 on GitHub. Not Agent.ai (no-code marketplace).</p>
+        <p class="desc">Production-ready autonomous agent: full-stack apps, deep research, slides &amp; storybooks, browser automation, doc editing (PDF/Excel/PPT), and integrations (Gmail, Slack, GitHub, Notion). Multi-model threads (Gemini, Claude, GPT) with Plan mode and custom skills from GitHub repos.</p>
+        <h4>Best for</h4>
+        <ul>
+          <li>Developers who want self-host + Docker control</li>
+          <li>Power users mixing models in one conversation</li>
+          <li>Research → deliverable workflows (reports, decks)</li>
+          <li>Teams automating workflows via custom skills</li>
+        </ul>
+        <div class="pricing">
+          <h4>Pricing (approx.)</h4>
+          <div class="tier"><span class="tier-name">Open source</span><span class="tier-cost">$0 — self-host; you pay API usage</span></div>
+          <div class="tier"><span class="tier-name">Hosted web app</span><span class="tier-cost">Free tier / waitlist; BYOK = your API keys</span></div>
+          <div class="tier"><span class="tier-name">Your keys</span><span class="tier-cost">Pay providers directly (usage varies)</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="replit" style="--accent:#f97316;--accent-light:#fdba74;--accent-glow:rgba(249,115,22,0.4)">
+        <div class="card-header">
+          <h3>Replit Agent</h3>
+          <span class="badge">replit.com</span>
+        </div>
+        <p class="tagline">"Describe the app. Watch it build, test, and deploy."</p>
+        <p class="desc">Cloud IDE meets AI builder. Replit Agent plans and ships web &amp; mobile apps, dashboards, designs, and slides — with Lite/Economy/Power build modes, Design Canvas, connectors (Stripe, OpenAI, etc.), and effort-based billing so simple tasks stay cheap.</p>
+        <h4>Best for</h4>
+        <ul>
+          <li>Non-devs prototyping apps fast</li>
+          <li>Devs who want deploy + collab in one place</li>
+          <li>MVPs with integrations out of the box</li>
+          <li>Teams pooling monthly AI credits (Pro)</li>
+        </ul>
+        <div class="pricing">
+          <h4>Pricing (approx.)</h4>
+          <div class="tier"><span class="tier-name">Starter</span><span class="tier-cost">$0 — daily Agent cap, Lite builds</span></div>
+          <div class="tier"><span class="tier-name">Core</span><span class="tier-cost">~$20/mo — full Agent, 5 collaborators</span></div>
+          <div class="tier"><span class="tier-name">Pro</span><span class="tier-cost">~$100/mo — Turbo Mode, $100+ credits, 15 builders</span></div>
+          <div class="tier"><span class="tier-name">Agent usage</span><span class="tier-cost">Effort-based; many tasks &lt; $0.25</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="suno" style="--accent:#e11d48;--accent-light:#fda4af;--accent-glow:rgba(225,29,72,0.4)">
+        <div class="card-header">
+          <h3>Suno</h3>
+          <span class="badge">suno.com</span>
+        </div>
+        <p class="tagline">"Type a vibe. Get a banger. (Maybe even commercial rights.)"</p>
+        <p class="desc">Leading AI music generator — full songs from text prompts with v4.5–v5.5 models, stem separation, advanced editing on paid tiers, and Suno Studio on Premier. Credit-based: ~5 credits per generation; plans scale to thousands of songs/month.</p>
+        <h4>Best for</h4>
+        <ul>
+          <li>Creators prototyping tracks &amp; jingles</li>
+          <li>Content makers needing royalty-ready audio (Pro+)</li>
+          <li>Quick iteration with priority queues</li>
+          <li>Exploring styles before hitting the studio</li>
+        </ul>
+        <div class="pricing">
+          <h4>Pricing (approx.)</h4>
+          <div class="tier"><span class="tier-name">Free</span><span class="tier-cost">$0 — ~50 credits/day (~10 songs)</span></div>
+          <div class="tier"><span class="tier-name">Pro</span><span class="tier-cost">~$8/mo — 2,500 credits, commercial use</span></div>
+          <div class="tier"><span class="tier-name">Premier</span><span class="tier-cost">~$24/mo — 10,000 credits + Studio</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="udio" style="--accent:#06b6d4;--accent-light:#67e8f9;--accent-glow:rgba(6,182,212,0.4)">
+        <div class="card-header">
+          <h3>Udio</h3>
+          <span class="badge">udo → Udio</span>
+        </div>
+        <p class="tagline">"Suno's rival in the ring — stems, remixes, major-label vibes."</p>
+        <p class="resolve"><strong>Clarified:</strong> <code>udo</code> is almost certainly <strong>Udio</strong> (udio.com) — AI music, not a typo of "udo" the language.</p>
+        <p class="desc">AI music creation with strong audio quality, Style &amp; Remix tools on Pro, stem downloads, and a licensing push in 2026 (UMG, Warner, Merlin). Great for producers who want more control per track than a one-shot prompt.</p>
+        <h4>Best for</h4>
+        <ul>
+          <li>Producers wanting stems &amp; remix workflows</li>
+          <li>Budget-conscious creators vs. premium rivals</li>
+          <li>Commercial projects (paid tiers)</li>
+          <li>Experimenting before licensed-catalog pricing shifts</li>
+        </ul>
+        <div class="pricing">
+          <h4>Pricing (approx.)</h4>
+          <div class="tier"><span class="tier-name">Free</span><span class="tier-cost">$0 — daily + monthly credits, non-commercial</span></div>
+          <div class="tier"><span class="tier-name">Standard</span><span class="tier-cost">~$10/mo — 2,400 credits, commercial</span></div>
+          <div class="tier"><span class="tier-name">Pro</span><span class="tier-cost">~$30/mo — 6,000 credits, highest quality</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="kling" style="--accent:#10b981;--accent-light:#6ee7b7;--accent-glow:rgba(16,185,129,0.4)">
+        <div class="card-header">
+          <h3>Kling AI</h3>
+          <span class="badge">klingai.com</span>
+        </div>
+        <p class="tagline">"Hollywood dreams, credit wallet reality — text to cinematic clip."</p>
+        <p class="desc">Kuaishou's AI video powerhouse: text-to-video &amp; image-to-video up to ~2 min (extendable), 1080p, native audio/lip-sync (2.6+), physics-aware motion, and character consistency. Credit-based tiers; intro promos often renew higher.</p>
+        <h4>Best for</h4>
+        <ul>
+          <li>Short-form video &amp; social content</li>
+          <li>Marketing clips with synced dialogue</li>
+          <li>Storyboards → motion proofs</li>
+          <li>Creators who outgrew slideshow AI</li>
+        </ul>
+        <div class="pricing">
+          <h4>Pricing (approx.)</h4>
+          <div class="tier"><span class="tier-name">Free</span><span class="tier-cost">$0 — limited monthly credits</span></div>
+          <div class="tier"><span class="tier-name">Standard</span><span class="tier-cost">~$7–9/mo intro (660 credits)</span></div>
+          <div class="tier"><span class="tier-name">Pro / Premier</span><span class="tier-cost">~$26–65/mo (3k–8k credits)</span></div>
+          <div class="tier"><span class="tier-name">Ultra</span><span class="tier-cost">~$120–180/mo heavy creators</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="flora" style="--accent:#d946ef;--accent-light:#f0abfc;--accent-glow:rgba(217,70,239,0.4)">
+        <div class="card-header">
+          <h3>FLORA + FAUNA</h3>
+          <span class="badge">flora fauna</span>
+        </div>
+        <p class="tagline">"Fifty models, one canvas — FAUNA runs the creative orchestra."</p>
+        <p class="resolve"><strong>Matched:</strong> <code>flora fauna</code> → <strong>FLORA</strong> (flora.ai) creative environment + <strong>FAUNA</strong>, its in-canvas AI agent (launched Mar 2026). Brand domain: florafauna.ai.</p>
+        <p class="desc">Professional node-based canvas wiring 50+ image, video, and text models. FAUNA picks models, sequences workflows, researches references (incl. Unsplash), and shows every step — built for design teams (Nike, Netflix-tier users), not one-click hobbyists.</p>
+        <h4>Best for</h4>
+        <ul>
+          <li>Design teams iterating campaigns visually</li>
+          <li>Art directors chaining multi-model pipelines</li>
+          <li>Agencies billing exact per-generation costs</li>
+          <li>FAUNA-assisted research → production flows</li>
+        </ul>
+        <div class="pricing">
+          <h4>Pricing (approx., new model May 2026)</h4>
+          <div class="tier"><span class="tier-name">Free</span><span class="tier-cost">$0 — explore text/image; FAUNA free</span></div>
+          <div class="tier"><span class="tier-name">Starter</span><span class="tier-cost">~$18/seat/mo — $18 usage budget</span></div>
+          <div class="tier"><span class="tier-name">Pro / Max</span><span class="tier-cost">~$50–200/seat/mo + launch bonuses</span></div>
+          <div class="tier"><span class="tier-name">FAUNA</span><span class="tier-cost">Free on all plans — doesn't eat budget</span></div>
+        </div>
+      </article>
+
+      <article class="card" id="kriya" style="--accent:#eab308;--accent-light:#fde047;--accent-glow:rgba(234,179,8,0.4)">
+        <div class="card-header">
+          <h3>Cockpit</h3>
+          <span class="badge">kriya</span>
+        </div>
+        <p class="tagline">"Workers that finish the work — not chatbots that type about it."</p>
+        <p class="resolve"><strong>Matched:</strong> <code>kriya</code> → <strong>kriya.ai</strong> now brands as <strong>Cockpit</strong> (oncockpit.ai) — autonomous AI workers for sales (prospecting, outreach, CRM, meetings). Older "Kriya AI" listings described email-intro networking; the live product is the Cockpit OS.</p>
+        <p class="desc">"Operating system for autonomous work": AI workers read inbox, calendar, contacts, and docs natively — run parallel outreach, remember context across sessions, and hand off work. Sales workflows ship now; Worker Studio for custom ops/marketing/HR lands fall 2026.</p>
+        <h4>Best for</h4>
+        <ul>
+          <li>Sales teams scaling outbound without more SDRs</li>
+          <li>Founders who want meetings booked, not drafts</li>
+          <li>Ops leaders tired of copy-paste between tools</li>
+          <li>Orgs ready for expert onboarding + human-in-the-loop</li>
+        </ul>
+        <div class="pricing">
+          <h4>Pricing (approx.)</h4>
+          <div class="tier"><span class="tier-name">Early access</span><span class="tier-cost">Invite-based — contact / activate flow</span></div>
+          <div class="tier"><span class="tier-name">Public tiers</span><span class="tier-cost">Not fully published May 2026</span></div>
+          <div class="tier"><span class="tier-name">ROI claim</span><span class="tier-cost">Customers cite payback ~6 weeks (G2)</span></div>
+        </div>
+      </article>
+
+    </main>
+
+    <footer>
+      <p>AI Tools Explorer · Compiled May 2026</p>
+      <p>Pricing is approximate and changes often — verify on each vendor's official site before buying. Intro promos, student discounts, and regional taxes not included.</p>
+    </footer>
+  </div>
+</body>
+</html>
